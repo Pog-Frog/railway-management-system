@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\DB;
 
 $train_types = DB::table('train_types')->get();
+$lines = DB::table('lines')->get();
+$captains = DB::table('captains')->get();
 
 ?>
     <!doctype html>
@@ -43,7 +45,7 @@ $train_types = DB::table('train_types')->get();
            href="#">Welcome {{$data->name}}</a>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="logout">Sign out</a>
+                <a class="nav-link" href="{{url("admin/logout")}}">Sign out</a>
             </li>
         </ul>
         <button style="margin-right: 80px;" class="navbar-toggler position-absolute d-md-none collapsed" type="button"
@@ -71,7 +73,7 @@ $train_types = DB::table('train_types')->get();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">
+                            <a class="nav-link" aria-current="page" href="{{url("admin/lines")}}">
                                 <span data-feather="airplay"></span>
                                 Line management
                             </a>
@@ -174,20 +176,49 @@ $train_types = DB::table('train_types')->get();
                     <label for="type" class="form-label">Type<span class="text-muted">(Required)</span></label>
                     <select class="form-select" id="type" name="type">
                         @foreach($train_types as $train_type)
-                            @if($train->type == $train_type->name)
-                                <option selected value="{{$train_type->name}}">{{$train_type->name}}</option>
+                            @if($train->type == $train_type->id)
+                                <option selected value="{{$train_type->id}}">{{$train_type->name}}</option>
                             @else
-                                <option value="{{$train_type->name}}">{{$train_type->name}}</option>
+                                <option value="{{$train_type->id}}">{{$train_type->name}}</option>
                             @endif
                         @endforeach
                     </select>
                     <span class="text-danger">@error('type') {{$message}} @enderror</span>
                 </div>
 
+                <div class="col-md-8">
+                    <label for="line" class="form-label">Line<span class="text-muted">(Required)</span></label>
+                    <select class="form-select" id="type" name="line">
+                        @foreach($lines as $line)
+                            @if($train->line == $line->id)
+                                <option selected value="{{$line->id}}">{{$line->name}}</option>
+                            @else
+                                <option value="{{$line->id}}">{{$line->name}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <span class="text-danger">@error('line') {{$message}} @enderror</span>
+                </div>
+
                 <div class="col-8">
                     <label for="no_of_cars" class="form-label">Number of cars<span class="text-muted">(Required)</span></label>
                     <input type="type" class="form-control" id="no_of_cars" placeholder="" name="no_of_cars" value="{{$train->no_of_cars}}">
                     <span class="text-danger">@error('no_of_cars') {{$message}} @enderror</span>
+                </div>
+
+                <div class="col-md-8">
+                    <label for="captain" class="form-label">Assign captain<span class="text-muted">(Required)</span></label>
+                    <select class="form-select" id="captain" name="captain">
+                        <option value="null">--None--</option>
+                        @foreach($captains as $captain)
+                            @if($train->captain == $captain->id)
+                                <option selected value="{{$captain->id}}">{{$captain->name}}</option>
+                            @else
+                                <option value="{{$captain->id}}">{{$captain->name}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <span class="text-danger">@error('captain') {{$message}} @enderror</span>
                 </div>
 
                 <div style="margin-top: 15px;" class="row ">

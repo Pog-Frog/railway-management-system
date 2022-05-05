@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Lines;
+use App\Station;
 use App\Train;
 use App\Train_type;
 use Illuminate\Http\Request;
 use App\Admin;
 use Hash;
-use MongoDB\Driver\Session;
 
 class CustomAuthController extends Controller
 {
@@ -89,13 +90,22 @@ class CustomAuthController extends Controller
         $request->validate([
             'number' => 'required|unique:trains',
             'type' => 'required',
-            'no_of_cars' => 'required'
+            'no_of_cars' => 'required',
+            'line' => 'required',
+            'captain' => 'required',
+            'status' => 'required'
         ]);
         $train = new Train();
         $train->number = $request->number;
         $train->no_of_cars = $request->no_of_cars;
-        $train->type = $request->type;
         $train->status = $request->status;
+        $train->type = $request->type;
+        if($request->captain != "null"){
+            $train->captain = $request->captain;
+        }
+        if($request->line != "null"){
+            $train->line = $request->line;
+        }
         $result = $train->save();
         if ($result) {
             return back()->with('success', 'Train Saved');
@@ -132,17 +142,26 @@ class CustomAuthController extends Controller
         $request->validate([
             'number' => 'required|min:3',
             'type' => 'required',
-            'no_of_cars' => 'required'
+            'no_of_cars' => 'required',
+            'line' => 'required',
+            'captain' => 'required',
+            'status' => 'required'
         ]);
         $train = Train::where('id', '=', $request->train_id)->first();
         $tmp = Train::where('number', '=', $request->number)->first();
-        if ($tmp->id != $train->id) {
-            return back()->with('fail', 'This number is already registered for another train');
+        if($tmp){
+            if ($tmp->id != $train->id) {
+                return back()->with('fail', 'This number is already registered for another train');
+            }
         }
         $train->number = $request->number;
         $train->no_of_cars = $request->no_of_cars;
         $train->type = $request->type;
         $train->status = $request->status;
+        $train->line = $request->line;
+        if($request->captain != "null"){
+            $train->captain = $request->captain;
+        }
         $result = $train->save();
         if ($result) {
             return back()->with('success', 'Train Updated');
@@ -175,5 +194,151 @@ class CustomAuthController extends Controller
     {
         $data = Admin::where('id', '=', session()->get("adminID"))->first();
         return view("admin/stations_managment_index", compact('data'));
+    }
+
+    public function insert_station(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:stations',
+            'city' => 'required'
+        ]);
+        $station = new Station();
+        $station->name = $request->name;
+        $station->city = $request->city;
+        $result = $station->save();
+        if ($result) {
+            return back()->with('success', 'Station Saved');
+        } else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function edit_station_index(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $station_id = $request->station_id;
+        $station = Station::where('id', '=', $station_id)->first();
+        return view('admin/edit_station', compact('data', 'station'));
+    }
+
+    public function edit_station(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'city' => 'required'
+        ]);
+        $station = Station::where('id', '=', $request->station_id)->first();
+        $tmp = Station::where('name', '=', $request->name)->first();
+        if($tmp){
+            if ($tmp->id != $station->id) {
+                return back()->with('fail', 'This number is already registered for another station');
+            }
+        }
+        $station->name = $request->name;
+        $station->city = $request->city;
+        $result = $station->save();
+        if ($result) {
+            return back()->with('success', 'Station Updated');
+        } else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function delete_station(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first(); ############
+        $station = Station::where('id', '=', $request->station_id)->first();
+        $result = $station->delete();
+        if ($result) {
+            return redirect('admin/stations/view_stations')->with('success', 'Station Deleted');
+        }
+        return redirect('admin/stations/view_stations')->with('fail', 'Something went wrong');
+    }
+
+    public function search_stations(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $user_query = $request->search_query;
+        $result = Station::query()
+            ->where('name', 'LIKE', "%{$user_query}%")
+            ->orWhere('city', 'LIKE', "%{$user_query}%")
+            ->get();
+        return view("admin/view_stations", compact('data', 'result'));
+    }
+
+    public function view_stations(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/view_stations", compact('data'));
+    }
+
+    public function lines_index()
+    {
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/lines_managment_index", compact('data'));
+    }
+
+    public function view_lines(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/view_lines", compact('data'));
+    }
+
+    public function insert_line(Request $request){
+        $request->validate([
+            'name' => 'required|unique:lines',
+            'stations' => 'required'
+        ]);
+        $line = new Lines();
+        $line->name = $request->name;
+        $line->stations = $request->stations;
+        $result = $line->save();
+        if ($result) {
+            return back()->with('success', 'Line Saved');
+        } else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function edit_line_index (Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $line_id = $request->line_id;
+        $line = Lines::where('id', '=', $line_id)->first();
+        return view('admin/edit_line', compact('data', 'line'));
+    }
+
+    public function edit_line(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'stations' => 'required'
+        ]);
+        $line = Lines::where('id', '=', $request->line_id)->first();
+        $tmp = Station::where('name', '=', $request->name)->first();
+        if($tmp){
+            if ($tmp->id != $line->id) {
+                return back()->with('fail', 'This name is already registered for another line');
+            }
+        }
+        $line->name = $request->name;
+        $line->stations = $request->stations;
+        $result = $line->save();
+        if ($result) {
+            return back()->with('success', 'Line Updated');
+        } else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function delete_line(Request $request){
+        $line = Lines::where('id', '=', $request->line_id)->first();
+        $result = $line->delete();
+        if ($result) {
+            return redirect('admin/lines/view_lines')->with('success', 'Line Deleted');
+        }
+        return redirect('admin/lines/view_lines')->with('fail', 'Something went wrong');
+    }
+
+    public function search_lines(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $user_query = $request->search_query;
+        $result = Lines::query()
+            ->where('name', 'LIKE', "%{$user_query}%")
+            ->orWhere('stations', 'LIKE', "%{$user_query}%")
+            ->get();
+        return view("admin/view_lines", compact('data', 'result'));
     }
 }

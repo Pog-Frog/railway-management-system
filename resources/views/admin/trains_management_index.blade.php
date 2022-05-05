@@ -36,7 +36,7 @@
            href="#">Welcome {{$data->name}}</a>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="logout">Sign out</a>
+                <a class="nav-link" href="{{url("admin/logout")}}">Sign out</a>
             </li>
         </ul>
         <button style="margin-right: 80px;" class="navbar-toggler position-absolute d-md-none collapsed" type="button"
@@ -52,25 +52,25 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="trains">
+                            <a class="nav-link" aria-current="page" href="{{url("admin/trains")}}">
                                 <span data-feather="airplay"></span>
                                 Train management
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="stations">
+                            <a class="nav-link" aria-current="page" href="{{url("admin/stations")}}">
                                 <span data-feather="airplay"></span>
                                 Station management
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">
+                            <a class="nav-link" aria-current="page" href="{{url("admin/lines")}}">
                                 <span data-feather="airplay"></span>
                                 Line management
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="employees">
+                            <a class="nav-link" href="{{url("admin/employees")}}">
                                 <span data-feather="user"></span>
                                 Employee Management
                             </a>

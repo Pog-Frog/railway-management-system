@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
+use App\Train;
 
-$trains = DB::table('trains')->get();
+$trains = Train::all();
 ?>
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div style="overflow-x: auto;" class="p-3 my-3 border rounded">
@@ -24,7 +24,8 @@ $trains = DB::table('trains')->get();
                 <th scope="col" style="text-align: center">type</th>
                 <th scope="col" style="text-align: center">number of cars</th>
                 <th scope="col" style="text-align: center">status</th>
-                <th scope="col" style="text-align: center">created at</th>
+                <th scope="col" style="text-align: center">line</th>
+                <th scope="col" style="text-align: center">captain</th>
                 <th scope="col" style="text-align: center">updated at</th>
                 <th scope="col" style="text-align: center">edit</th>
             </tr>
@@ -44,7 +45,11 @@ $trains = DB::table('trains')->get();
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$train->type}}
+                                @if(is_null($train->types))
+                                    {{"not assigned"}}
+                                @else
+                                    {{$train->types->name}}
+                                @endif
                             </div>
                         </td>
                         <td style="text-align: center">
@@ -59,7 +64,20 @@ $trains = DB::table('trains')->get();
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$train->created_at}}
+                                @if(is_null($train->lines))
+                                    {{"not assigned"}}
+                                @else
+                                    {{$train->lines->name}}
+                                @endif
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                @if(is_null($train->captain))
+                                    {{"not assigned"}}
+                                @else
+                                    {{$train->captains->name}}
+                                @endif
                             </div>
                         </td>
                         <td style="text-align: center">
