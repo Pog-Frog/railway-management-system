@@ -1,8 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CustomAuthController; ## Admin Controller
-use App\Http\Controllers\UserController; ## Users Controller
+use App\Http\Controllers\CustomAuthController;
+
+## Admin Controller
+use App\Http\Controllers\UserController;
+
+## Users Controller
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +47,18 @@ Route::post("admin/lines/edit_line/{line_id}", [CustomAuthController::class, 'ed
 Route::post("admin/lines/edit_line/delete_line/{line_id}", [CustomAuthController::class, 'delete_line'])->name('delete_line')->middleware('isloggedin');
 Route::get("admin/lines/view_lines/search_lines", [CustomAuthController::class, 'search_lines'])->name('search_lines')->middleware('isloggedin');
 Route::get("admin/employees", [CustomAuthController::class, 'employees_index'])->name('employee_management')->middleware('isloggedin');
+Route::post("admin/employees/insert_employee_index", [CustomAuthController::class, 'insert_employee_index'])->name('insert_employee_index')->middleware('isloggedin');
+Route::post("admin/employees/insert_employee/insert_captain", [CustomAuthController::class, 'insert_captain'])->name('insert_captain')->middleware('isloggedin');
+Route::post("admin/employees/insert_employee/insert_technician", [CustomAuthController::class, 'insert_technician'])->name('insert_technician')->middleware('isloggedin');
+Route::post("admin/employees/insert_employee/insert_reservation_employee", [CustomAuthController::class, 'insert_reservation_employee'])->name('insert_reservation_employee')->middleware('isloggedin');
+Route::get("admin/employees/view_employees", [CustomAuthController::class, 'view_employees'])->name('view_employees')->middleware('isloggedin');
+Route::get("admin/employees/view_employees/search_employees", [CustomAuthController::class, 'search_employees'])->name('search_employees')->middleware('isloggedin');
+Route::get("admin/employees/edit_captain_index/{emp_id}", [CustomAuthController::class, 'edit_captain_index'])->name('edit_captain_index')->middleware('isloggedin');
+Route::get("admin/employees/edit_technician_index/{emp_id}", [CustomAuthController::class, 'edit_technician_index'])->name('edit_technician_index')->middleware('isloggedin');
+Route::get("admin/employees/edit_reservation_employee_index/{emp_id}", [CustomAuthController::class, 'edit_reservation_employee_index'])->name('edit_reservation_employee_index')->middleware('isloggedin');
+Route::post("admin/employees/edit_employee/{profession}/{emp_id}", [CustomAuthController::class, 'edit_employee'])->name('edit_employee')->middleware('isloggedin');
+Route::post("admin/employees/edit_employee/send_emp_password/{profession}/{emp_id}", [CustomAuthController::class, 'send_emp_password'])->name('send_emp_password')->middleware('isloggedin');
+Route::post("admin/employees/edit_employee/delete_employee/{profession}/{emp_id}", [CustomAuthController::class, 'delete_employee'])->name('delete_employee')->middleware('isloggedin');
 
 
 ##USER

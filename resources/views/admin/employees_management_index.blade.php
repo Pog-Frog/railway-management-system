@@ -99,15 +99,15 @@
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="?insert_employee">
+                            <a class="nav-link" href="{{url("admin/employees?insert_employee_index")}}">
                                 <span data-feather="file-text"></span>
                                 Add new employee
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{route("view_employees")}}">
                                 <span data-feather="file-text"></span>
-                                View employees
+                                View Employees
                             </a>
                         </li>
                         <li class="nav-item">
@@ -130,8 +130,11 @@
 </head>
 <body>
 @csrf
-@if(isset($_GET['insert_employee']))
+@if(isset($_GET['insert_employee_index']))
     @include("admin.insert_employee_index")
+@endif
+@if(isset($_GET['insert_employee']))
+    @include("admin.insert_employee")
 @endif
 </body>
 <script src="{{ url('/scripts/bootstrap.bundle.min.js') }}"></script>

@@ -145,7 +145,7 @@
                 </div>
 
                 <div class="col-8">
-                    <label for="city" class="form-label">Number of cars<span
+                    <label for="city" class="form-label">Station city<span
                             class="text-muted">(Required)</span></label>
                     <input type="text" class="form-control" id="city" placeholder="" name="city"
                            value="{{$station->city}}">
