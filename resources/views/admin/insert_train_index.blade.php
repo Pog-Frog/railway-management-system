@@ -82,7 +82,7 @@
                     </div>
                 </div>
 
-            <button class="w-100 btn btn-primary btn-lg" type="submit">Submit</button>
+            <button class="w-100 btn btn-outline-primary btn-lg" type="submit">Submit</button>
         </form>
     </div>
 </main>

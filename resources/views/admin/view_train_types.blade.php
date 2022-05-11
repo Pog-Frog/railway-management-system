@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
+use App\Train_type;
 
-$trains_types = DB::table('train_types')->get();
+$trains_types = Train_type::all();
 ?>
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div style="overflow-x: auto;" class="p-3 my-3 border rounded">
@@ -28,9 +28,11 @@ $trains_types = DB::table('train_types')->get();
             <tbody>
             @foreach($trains_types as $train_type)
                 <tr>
-                    <th scope="row">
-                        <input type="type" style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;" name="train_type_id" value="{{$train_type->id}}" disabled>
-                    </th>
+                    <td style="text-align: center">
+                        <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                            {{$train_type->id}}
+                        </div>
+                    </td>
 
                     <td style="text-align: center">
                         <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">

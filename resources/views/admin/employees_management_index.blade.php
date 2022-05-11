@@ -133,8 +133,14 @@
 @if(isset($_GET['insert_employee_index']))
     @include("admin.insert_employee_index")
 @endif
-@if(isset($_GET['insert_employee']))
-    @include("admin.insert_employee")
+@if(isset($_GET['insert_captain_index']))
+    @include("admin.insert_captain_index")
+@endif
+@if(isset($_GET['insert_technician_index']))
+    @include("admin.insert_technician_index")
+@endif
+@if(isset($_GET['insert_reservation_employee_index']))
+    @include("admin.insert_reservation_employee_index")
 @endif
 </body>
 <script src="{{ url('/scripts/bootstrap.bundle.min.js') }}"></script>

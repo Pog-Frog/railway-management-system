@@ -114,15 +114,9 @@ $captains = DB::table('captains')->get();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains/?view_all_trains")}}">
+                            <a class="nav-link" href="{{route("view_trains")}}">
                                 <span data-feather="file-text"></span>
                                 View Trains
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="file-text"></span>
-                                Search Trains
                             </a>
                         </li>
                         <li class="nav-item">
@@ -253,7 +247,7 @@ $captains = DB::table('captains')->get();
                         @endif
                     </div>
                 </div>
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Submit</button>
+                <button class="w-100 btn btn-outline-primary btn-lg" type="submit">Submit</button>
         </form>
         <form method="POST" action="{{route('delete_train', ['train_id'=>($train->id)])}}">
             @csrf

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Admin;
 use Hash;
 use Illuminate\Support\Str;
+use function Symfony\Component\Translation\t;
 
 class CustomAuthController extends Controller
 {
@@ -117,6 +118,47 @@ class CustomAuthController extends Controller
         } else {
             return back()->with('fail', 'Something went wrong');
         }
+    }
+
+    public function view_trains(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/view_trains", compact('data'));
+    }
+
+    public function search_trains(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $user_query = $request->search_query;
+        $result = Train::query()
+            ->where('number', 'LIKE', "%{$user_query}%")
+            ->orWhere('id', 'LIKE', "%{$user_query}%")
+            ->orWhere('status', 'LIKE', "%{$user_query}%")
+            ->orWhere('no_of_cars', 'LIKE', "%{$user_query}%")
+            ->get();
+        if($result->isEmpty()){
+            $line = Lines::where('name', '=', $user_query)->first();
+            if($line){
+                $result = Train::query()
+                    ->where('line', 'LIKE', "%{$line->id}%")
+                    ->get();
+            }
+            else{
+                $captain = Captain::where('name', '=', $user_query)->first();
+                if($captain){
+                    $result = Train::query()
+                        ->where('captain', 'LIKE', "%{$captain->id}%")
+                        ->get();
+                }else{
+                    $type = Train_type::where('name', '=', $user_query)->first();
+                    if($type){
+                        $result = Train::query()
+                            ->where('type', 'LIKE', "%{$type->id}%")
+                            ->get();
+                    }
+                }
+
+            }
+        }
+        return view("admin/view_trains", compact('data', 'result'));
     }
 
     public function insert_train_type(Request $request)
@@ -363,11 +405,11 @@ class CustomAuthController extends Controller
     {
         $choice = $request->type;
         if ($choice == "captain") {
-            return redirect('admin/employees?insert_employee')->with('profession', 'captain');
+            return redirect('admin/employees?insert_captain_index');
         } elseif ($choice == "technician") {
-            return redirect('admin/employees?insert_employee')->with('profession', 'technician');
+            return redirect('admin/employees?insert_technician_index');
         } else {
-            return redirect('admin/employees?insert_employee')->with('profession', 'reservation');
+            return redirect('admin/employees?insert_reservation_employee_index');
         }
     }
 
@@ -397,7 +439,7 @@ class CustomAuthController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:captains'
+            'email' => 'required|email|unique:technicians'
         ]);
         $technician = new Technician();
         $technician->name = $request->name;
@@ -419,7 +461,7 @@ class CustomAuthController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:captains'
+            'email' => 'required|email|unique:reservation_emps'
         ]);
         $emp = new Reservation_emp();
         $emp->name = $request->name;

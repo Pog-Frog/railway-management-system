@@ -99,31 +99,25 @@
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="?insert_train">
+                            <a class="nav-link" href="{{url("admin/trains?insert_train")}}">
                                 <span data-feather="file-text"></span>
                                 Add Trains
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="?view_all_trains">
+                            <a class="nav-link" href="{{route("view_trains")}}">
                                 <span data-feather="file-text"></span>
                                 View Trains
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="file-text"></span>
-                                Search Trains
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="?insert_train_type">
+                            <a class="nav-link" href="{{url("admin/trains?insert_train_type")}}">
                                 <span data-feather="file-text"></span>
                                 Insert new Train type
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="?view_train_types">
+                            <a class="nav-link" href="{{url("admin/trains?view_train_types")}}">
                                 <span data-feather="file-text"></span>
                                 View Train types
                             </a>
@@ -141,9 +135,6 @@
 @endif
 @if(isset($_GET['insert_train_type']))
     @include("admin.insert_train_type")
-@endif
-@if(isset($_GET['view_all_trains']))
-    @include("admin.view_trains")
 @endif
 @if(isset($_GET['view_train_types']))
     @include("admin.view_train_types")

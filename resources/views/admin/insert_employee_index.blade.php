@@ -15,7 +15,7 @@
                 </select>
                 <span class="text-danger">@error('type') {{$message}} @enderror</span>
             </div>
-            <button class="w-100 btn btn-primary btn-sm" type="submit">Submit</button>
+            <button class="w-100 btn btn-outline-primary btn-sm" type="submit">Submit</button>
         </form>
     </div>
 </main>

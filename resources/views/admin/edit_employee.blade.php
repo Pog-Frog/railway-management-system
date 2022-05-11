@@ -177,13 +177,13 @@ $technicians = DB::table('technicians')->get();
                     <span class="text-danger">@error('email') {{$message}} @enderror</span>
                 </div>
 
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Submit</button>
+                <button class="w-100 btn btn-outline-primary btn-lg" type="submit">Submit</button>
         </form>
         <form method="POST"
               action="{{route('send_emp_password', ['emp_id'=>($emp->id), 'profession' => ($profession)])}}">
             @csrf
             <div class="col text-center">
-                <button class="w-25 btn btn-primary btn-sm" type="submit">Regenerate Password</button>
+                <button class="w-25 btn btn-outline-primary btn-sm" type="submit">Regenerate Password</button>
             </div>
         </form>
         <form method="POST"
