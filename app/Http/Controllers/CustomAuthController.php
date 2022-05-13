@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use App\Admin;
 use Hash;
 use Illuminate\Support\Str;
-use function Symfony\Component\Translation\t;
 
 class CustomAuthController extends Controller
 {
@@ -120,12 +119,14 @@ class CustomAuthController extends Controller
         }
     }
 
-    public function view_trains(Request $request){
+    public function view_trains(Request $request)
+    {
         $data = Admin::where('id', '=', session()->get("adminID"))->first();
         return view("admin/view_trains", compact('data'));
     }
 
-    public function search_trains(Request $request){
+    public function search_trains(Request $request)
+    {
         $data = Admin::where('id', '=', session()->get("adminID"))->first();
         $user_query = $request->search_query;
         $result = Train::query()
@@ -134,22 +135,21 @@ class CustomAuthController extends Controller
             ->orWhere('status', 'LIKE', "%{$user_query}%")
             ->orWhere('no_of_cars', 'LIKE', "%{$user_query}%")
             ->get();
-        if($result->isEmpty()){
+        if ($result->isEmpty()) {
             $line = Lines::where('name', '=', $user_query)->first();
-            if($line){
+            if ($line) {
                 $result = Train::query()
                     ->where('line', 'LIKE', "%{$line->id}%")
                     ->get();
-            }
-            else{
+            } else {
                 $captain = Captain::where('name', '=', $user_query)->first();
-                if($captain){
+                if ($captain) {
                     $result = Train::query()
                         ->where('captain', 'LIKE', "%{$captain->id}%")
                         ->get();
-                }else{
+                } else {
                     $type = Train_type::where('name', '=', $user_query)->first();
-                    if($type){
+                    if ($type) {
                         $result = Train::query()
                             ->where('type', 'LIKE', "%{$type->id}%")
                             ->get();
