@@ -40,12 +40,7 @@ $trains_types = Train_type::all();
                         </div>
                     </td>
                     <td style="text-align: center">
-                        <form method="post" action="{{route('delete_train_type', ['type_id'=>($train_type->id)])}}">
-                            @csrf
-                            <div class="col text-center">
-                                <button class="w-25 btn btn-primary btn-sm" type="submit">Delete</button>
-                            </div>
-                        </form>
+                        <a href="{{route('edit_train_type_index', ['train_type_id'=>($train_type->id)])}}">Edit</a>
                     </td>
                 </tr>
             @endforeach

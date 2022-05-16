@@ -17,7 +17,7 @@
             @csrf
             <div class="row g-3">
                 <div class="col-10">
-                    <label for="name" class="form-label">Train number<span class="text-muted">(Required)</span></label>
+                    <label for="name" class="form-label">Type name<span class="text-muted">(Required)</span></label>
                     <input type="text" class="form-control" id="name" placeholder="" name="name">
                     <span class="text-danger">@error('name') {{$message}} @enderror</span>
                 </div>

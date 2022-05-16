@@ -82,7 +82,7 @@ $lines = DB::table('lines')->get();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/trips")}}">
                                 <span data-feather="briefcase"></span>
                                 Trips
                             </a>
@@ -229,7 +229,7 @@ $lines = DB::table('lines')->get();
     </div>
 </main>
 </body>
-<script src="{{ url('/scripts/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
         integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"

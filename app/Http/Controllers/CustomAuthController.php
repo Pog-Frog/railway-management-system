@@ -10,6 +10,8 @@ use App\Station;
 use App\Technician;
 use App\Train;
 use App\Train_type;
+use App\Trip;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Admin;
 use Hash;
@@ -225,6 +227,35 @@ class CustomAuthController extends Controller
             return redirect('admin/trains?view_all_trains')->with('success', 'Train Deleted');
         } else {
             return redirect('admin/trains?view_all_trains')->with('fail', 'Something went wrong');
+        }
+    }
+
+    public function edit_train_type_index(Request $request)
+    {
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $train_type_id = $request->train_type_id;
+        $train_type = Train_type::where('id', '=', $train_type_id)->first();
+        return view('admin/edit_train_type', compact('data', 'train_type'));
+    }
+
+    public function edit_train_type(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+        ]);
+        $train_type = Train_type::where('id', '=', $request->train_type_id)->first();
+        $tmp = Train_type::where('name', '=', $request->name)->first();
+        if ($tmp) {
+            if ($tmp->id != $train_type->id) {
+                return back()->with('fail', 'This name is already registered for another train type');
+            }
+        }
+        $train_type->name = $request->name;
+        $result = $train_type->save();
+        if ($result) {
+            return back()->with('success', 'Train type Updated');
+        } else {
+            return back()->with('fail', 'Something went wrong');
         }
     }
 
@@ -642,4 +673,42 @@ class CustomAuthController extends Controller
         }
         return redirect('admin/employees/view_employees')->with('fail', 'Something went wrong');
     }
+
+    public function trips_index(Request $request)
+    {
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/trips_management_index", compact('data'));
+    }
+
+    public function insert_trip(Request $request)
+    {
+        $arrival = " ";
+        $departure = " ";
+        if ($request->departure_date && $request->arrival_date) {
+            $departure = str_replace(",", "", $request->departure_date);
+            $arrival = str_replace(",", "", $request->arrival_date);
+        }
+        $now = Carbon::now()->timezone('Africa/Cairo');
+        $request->validate([
+            'name' => 'required|unique:trips',
+            'train' => 'required|exists:trains,id',
+            'captain' => 'required|exists:captains,id',
+            'departure_date' => 'required|before:' . $arrival,
+            'departure_date' => 'after:' . $now,
+            'arrival_date' => 'required|after:' . $departure
+        ]);
+        $trip = new Trip();
+        $trip->name = $request->name;
+        $trip->train = $request->train;
+        $trip->captain = $request->captain;
+        $trip->departure_time = Carbon::parse($request->departure_date)->format('Y-m-d H:i:s');
+        $trip->arrival_time = Carbon::parse($request->arrival_date)->format('Y-m-d H:i:s');
+        $result = $trip->save();
+        if ($result) {
+            return back()->with('success', 'Trip Saved');
+        } else {
+            return back()->with('fail', 'Something went wrong');
+        }
+    }
 }
+

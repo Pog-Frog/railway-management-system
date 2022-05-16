@@ -33,7 +33,9 @@ Route::post("admin/trains/insert_train_type", [CustomAuthController::class, 'ins
 Route::get("admin/trains/edit_train_index/{train_id}", [CustomAuthController::class, 'edit_train_index'])->name('edit_train_index')->middleware('isloggedin');
 Route::post("admin/trains/edit_train/{train_id}", [CustomAuthController::class, 'edit_train'])->name('edit_train')->middleware('isloggedin');
 Route::post("admin/trains/edit_train/delete_train/{train_id}", [CustomAuthController::class, 'delete_train'])->name('delete_train')->middleware('isloggedin');
-Route::post("admin/trains/delete_train_type", [CustomAuthController::class, 'delete_train_type'])->name('delete_train_type')->middleware('isloggedin');
+Route::get("admin/trains/edit_train_type_index/{train_type_id}", [CustomAuthController::class, 'edit_train_type_index'])->name('edit_train_type_index')->middleware('isloggedin');
+Route::post("admin/trains/edit_train_type/{train_type_id}", [CustomAuthController::class, 'edit_train_type'])->name('edit_train_type')->middleware('isloggedin');
+Route::post("admin/trains/edit_train_type/delete_train_type/{train_type_id}", [CustomAuthController::class, 'delete_train_type'])->name('delete_train_type')->middleware('isloggedin');
 Route::get("admin/stations", [CustomAuthController::class, 'stations_index'])->name('stations_index')->middleware('isloggedin');
 Route::post("admin/stations/insert_station", [CustomAuthController::class, 'insert_station'])->name('insert_station')->middleware('isloggedin');
 Route::get("admin/stations/edit_station_index/{station_id}", [CustomAuthController::class, 'edit_station_index'])->name('edit_station_index')->middleware('isloggedin');
@@ -61,6 +63,8 @@ Route::get("admin/employees/edit_reservation_employee_index/{emp_id}", [CustomAu
 Route::post("admin/employees/edit_employee/{profession}/{emp_id}", [CustomAuthController::class, 'edit_employee'])->name('edit_employee')->middleware('isloggedin');
 Route::post("admin/employees/edit_employee/send_emp_password/{profession}/{emp_id}", [CustomAuthController::class, 'send_emp_password'])->name('send_emp_password')->middleware('isloggedin');
 Route::post("admin/employees/edit_employee/delete_employee/{profession}/{emp_id}", [CustomAuthController::class, 'delete_employee'])->name('delete_employee')->middleware('isloggedin');
+Route::get("admin/trips", [CustomAuthController::class, 'trips_index'])->name('trips_index')->middleware('isloggedin');
+Route::post("admin/trips/insert_trip", [CustomAuthController::class, 'insert_trip'])->name('insert_trip')->middleware('isloggedin');
 
 
 ##USER

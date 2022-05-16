@@ -15,8 +15,16 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user');
+            $table->foreign('user')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('trip');
             $table->foreign('trip')->references('id')->on('trips')->onDelete('cascade');
+            $table->unsignedBigInteger('departure_station');
+            $table->foreign('departure_station')->references('id')->on('stations')->onDelete('cascade');
+            $table->unsignedBigInteger('arrival_station');
+            $table->foreign('arrival_station')->references('id')->on('stations')->onDelete('cascade');
+            $table->dateTime('departure_date');
+            $table->dateTime('arrival_date');
             $table->timestamps();
         });
     }

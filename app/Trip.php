@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Trip extends Model
 {
     //
-    public function trains(){
+    public function trains()
+    {
         return $this->belongsTo(Train::class, 'train');
     }
 
