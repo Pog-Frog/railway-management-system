@@ -710,5 +710,22 @@ class CustomAuthController extends Controller
             return back()->with('fail', 'Something went wrong');
         }
     }
+
+    public function view_trips(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        return view("admin/view_trips", compact('data'));
+    }
+
+    public function edit_trip_index(Request $request){
+        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $trip_id = $request->trip_id;
+        $trip = Trip::where('id', '=', $trip_id)->first();
+        return view('admin/edit_trip', compact('data', 'trip'));
+    }
+
+    public function search_trips(Request $request){
+
+    }
+
 }
 

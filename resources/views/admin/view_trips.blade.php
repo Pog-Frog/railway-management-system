@@ -1,10 +1,10 @@
 <?php
 
-use App\Train;
+use App\Trip;
 
-$trains = Train::all();
+$trips = Trip::all();
 ?>
-    <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -14,9 +14,9 @@ $trains = Train::all();
     <meta name="generator" content="Hugo 0.88.1">
     <title>Dashboard Template · Bootstrap v5.1</title>
 
-
     <!-- Bootstrap core CSS -->
     <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -32,7 +32,6 @@ $trains = Train::all();
             }
         }
     </style>
-
 
     <!-- Custom styles for this template -->
     <link href="{{ url('styles/admin/dashboard.css') }}" rel="stylesheet">
@@ -105,27 +104,15 @@ $trains = Train::all();
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains?insert_train")}}">
+                            <a class="nav-link" href="{{url("admin/trips?insert_trip_index")}}">
                                 <span data-feather="file-text"></span>
-                                Add Trains
+                                Add new trip
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route("view_trains")}}">
+                            <a class="nav-link" href="{{route("view_trips")}}">
                                 <span data-feather="file-text"></span>
-                                View Trains
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains?insert_train_type")}}">
-                                <span data-feather="file-text"></span>
-                                Insert new Train type
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains?view_train_types")}}">
-                                <span data-feather="file-text"></span>
-                                View Train types
+                                View Trips
                             </a>
                         </li>
                     </ul>
@@ -139,7 +126,8 @@ $trains = Train::all();
     <form method="get" action="{{route("search_trains")}}">
         @csrf
         <div class="input-group p-2">
-            <input type="search" class="form-control rounded" placeholder="Search by number, type, number of cars, ID, status, line, captain" aria-label="Search"
+            <input type="search" class="form-control rounded"
+                   placeholder="Search by number, type, number of cars, ID, status, line, captain" aria-label="Search"
                    name="search_query" aria-describedby="search-addon"/>
             <button type="submit" class="btn btn-outline-primary">search</button>
         </div>
@@ -159,135 +147,109 @@ $trains = Train::all();
             <thead>
             <tr>
                 <th scope="col" style="text-align: center">ID</th>
-                <th scope="col" style="text-align: center">number/name</th>
-                <th scope="col" style="text-align: center">type</th>
-                <th scope="col" style="text-align: center">number of cars</th>
-                <th scope="col" style="text-align: center">status</th>
-                <th scope="col" style="text-align: center">line</th>
+                <th scope="col" style="text-align: center">name</th>
+                <th scope="col" style="text-align: center">train</th>
                 <th scope="col" style="text-align: center">captain</th>
-                <th scope="col" style="text-align: center">updated at</th>
+                <th scope="col" style="text-align: center">departure time</th>
+                <th scope="col" style="text-align: center">arrival time</th>
                 <th scope="col" style="text-align: center">edit</th>
             </tr>
             </thead>
 
             <tbody>
             @if(isset($result))
-                @foreach($result as $train)
+                @foreach($result as $trip)
                     <tr>
                         <th scope="row">
-                            <input type="type" style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;" name="train_id" value="{{$train->id}}" disabled>
+                            <input type="type"
+                                   style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                   name="train_id" value="{{$trip->id}}" disabled>
                         </th>
 
                         <td style="text-align: center">
                             <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                {{$train->number}}
+                                {{$trip->name}}
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($train->types))
+                                @if(is_null($trip->train))
                                     {{"not assigned"}}
                                 @else
-                                    {{$train->types->name}}
+                                    {{$trip->trains->number}}
                                 @endif
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$train->no_of_cars}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$train->status}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($train->lines))
+                                @if(is_null($trip->captain))
                                     {{"not assigned"}}
                                 @else
-                                    <a href="{{route('edit_line_index', ['line_id'=>($train->lines->id)])}}">{{$train->lines->name}}</a>
+                                    {{$trip->captains->name}}
                                 @endif
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($train->captain))
-                                    {{"not assigned"}}
-                                @else
-                                    {{$train->captains->name}}
-                                @endif
+                                {{date('Y/m/d h:i:s a', strtotime($trip->departure_time))}}
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$train->updated_at}}
+                                {{date('Y/m/d h:i:s a', strtotime($trip->arrival_time))}}
                             </div>
                         </td>
                         <td style="text-align: center">
-                            <a href="{{route('edit_train_index', ['train_id'=>($train->id)])}}">Edit</a>
+                            <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
                         </td>
                     </tr>
                 @endforeach
             @else
-                @foreach($trains as $train)
-                        <tr>
-                            <th scope="row">
-                                <input type="type" style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;" name="train_id" value="{{$train->id}}" disabled>
-                            </th>
+                @foreach($trips as $trip)
+                    <tr>
+                        <th scope="row">
+                            <input type="type"
+                                   style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                   name="train_id" value="{{$trip->id}}" disabled>
+                        </th>
 
-                            <td style="text-align: center">
-                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                    {{$train->number}}
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    @if(is_null($train->types))
-                                        {{"not assigned"}}
-                                    @else
-                                        {{$train->types->name}}
-                                    @endif
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    {{$train->no_of_cars}}
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    {{$train->status}}
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    @if(is_null($train->lines))
-                                        {{"not assigned"}}
-                                    @else
-                                        <a href="{{route('edit_line_index', ['line_id'=>($train->lines->id)])}}">{{$train->lines->name}}</a>
-                                    @endif
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    @if(is_null($train->captain))
-                                        {{"not assigned"}}
-                                    @else
-                                        {{$train->captains->name}}
-                                    @endif
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                    {{$train->updated_at}}
-                                </div>
-                            </td>
-                            <td style="text-align: center">
-                                <a href="{{route('edit_train_index', ['train_id'=>($train->id)])}}">Edit</a>
-                            </td>
-                        </tr>
+                        <td style="text-align: center">
+                            <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                {{$trip->name}}
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                @if(is_null($trip->train))
+                                    {{"not assigned"}}
+                                @else
+                                    {{$trip->trains->number}}
+                                @endif
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                @if(is_null($trip->captain))
+                                    {{"not assigned"}}
+                                @else
+                                    {{$trip->captains->name}}
+                                @endif
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                {{date('Y/m/d h:i:s a', strtotime($trip->departure_time))}}
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                {{date('Y/m/d h:i:s a', strtotime($trip->arrival_time))}}
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                        </td>
+                    </tr>
                 @endforeach
             @endif
             </tbody>
@@ -295,8 +257,9 @@ $trains = Train::all();
     </div>
 </main>
 </body>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
+<script src="{{ url('/js/jquery.min.js') }}"></script>
+<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 <script src="{{ url('/js/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>
