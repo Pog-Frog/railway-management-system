@@ -1,12 +1,13 @@
 <?php
+use App\Admin;
+use App\Line;
+use App\Captain;
 
-use Illuminate\Support\Facades\DB;
-
-$train_types = DB::table('train_types')->get();
-$lines = DB::table('lines')->get();
-$captains = DB::table('captains')->get();
-
+$admins = Admin::all();
+$lines = Line::all();
+$captains = Captain::all();
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,11 +16,11 @@ $captains = DB::table('captains')->get();
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
-    <title>Dashboard Template · Bootstrap v5.1</title>
+    <title>Railway Management System</title>
 
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -91,17 +92,12 @@ $captains = DB::table('captains')->get();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/customers")}}">
                                 <span data-feather="users"></span>
                                 Customer accounts
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Management tools</span>
@@ -117,18 +113,6 @@ $captains = DB::table('captains')->get();
                             <a class="nav-link" href="{{route("view_trains")}}">
                                 <span data-feather="file-text"></span>
                                 View Trains
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains?insert_train_type")}}">
-                                <span data-feather="file-text"></span>
-                                Insert new Train type
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url("admin/trains?view_train_types")}}">
-                                <span data-feather="file-text"></span>
-                                View Train types
                             </a>
                         </li>
                     </ul>
@@ -161,59 +145,93 @@ $captains = DB::table('captains')->get();
                     <label for="number" class="form-label">Train number<span
                             class="text-muted">(Required)</span></label>
                     <input type="text" class="form-control" id="number" placeholder="" name="number"
-                           value="{{$train->number}}">
+                           value="{{$train->train_no}}" disabled>
                     <span class="text-danger">@error('number') {{$message}} @enderror</span>
                 </div>
 
-
-                <div class="col-md-7">
-                    <label for="type" class="form-label">Type<span class="text-muted">(Required)</span></label>
-                    <select class="form-select" id="type" name="type">
-                        @foreach($train_types as $train_type)
-                            @if($train->type == $train_type->id)
-                                <option selected value="{{$train_type->id}}">{{$train_type->name}}</option>
-                            @else
-                                <option value="{{$train_type->id}}">{{$train_type->name}}</option>
-                            @endif
-                        @endforeach
-                    </select>
-                    <span class="text-danger">@error('type') {{$message}} @enderror</span>
+                <div class="col-sm-5">
+                    <label for="train_model" class="form-label">Train model<span
+                            class="text-muted">(Required)</span></label>
+                    <input type="text" class="form-control" id="train_model" placeholder="" name="train_model"
+                           value="{{$train->train_model}}">
+                    <span class="text-danger">@error('train_model') {{$message}} @enderror</span>
                 </div>
 
-                <div class="col-md-8">
-                    <label for="line" class="form-label">Line<span class="text-muted">(Required)</span></label>
-                    <select class="form-select" id="type" name="line">
-                        @foreach($lines as $line)
-                            @if($train->line == $line->id)
-                                <option selected value="{{$line->id}}">{{$line->name}}</option>
-                            @else
-                                <option value="{{$line->id}}">{{$line->name}}</option>
-                            @endif
-                        @endforeach
-                    </select>
-                    <span class="text-danger">@error('line') {{$message}} @enderror</span>
-                </div>
-
-                <div class="col-8">
+                <div class="col-sm-3">
                     <label for="no_of_cars" class="form-label">Number of cars<span class="text-muted">(Required)</span></label>
-                    <input type="type" class="form-control" id="no_of_cars" placeholder="" name="no_of_cars" value="{{$train->no_of_cars}}">
+                    <input type="text" class="form-control" id="no_of_cars" placeholder="" name="no_of_cars"
+                           value="{{$train->no_of_cars}}">
                     <span class="text-danger">@error('no_of_cars') {{$message}} @enderror</span>
                 </div>
 
                 <div class="col-md-8">
-                    <label for="captain" class="form-label">Assign captain<span class="text-muted">(Required)</span></label>
-                    <select class="form-select" id="captain" name="captain">
+                    <label for="admin" class="form-label">Assign admin<span class="text-muted">(Required)</span></label>
+                    <select class="form-select" id="admin" name="admin">
                         <option value="null">--None--</option>
-                        @foreach($captains as $captain)
-                            @if($train->captain == $captain->id)
-                                <option selected value="{{$captain->id}}">{{$captain->name}}</option>
+                        @foreach($admins as $admin)
+                            @if($train->admin == $admin->id)
+                                <option selected value="{{$admin->id}}">{{$admin->name}}</option>
                             @else
-                                <option value="{{$captain->id}}">{{$captain->name}}</option>
+                                <option value="{{$admin->id}}">{{$admin->name}}</option>
                             @endif
                         @endforeach
                     </select>
-                    <span class="text-danger">@error('captain') {{$message}} @enderror</span>
+                    <span class="text-danger">@error('admin') {{$message}} @enderror</span>
                 </div>
+
+                @if(isset($assigned_line_for_train))
+                    <div class="col-sm-8">
+                        <label for="line" class="form-label">Assign Line<span class="text-muted">(Required)</span></label>
+                        <select class="form-select" id="line" name="line">
+                            <option value="null">--None--</option>
+                            @foreach($lines as $line)
+                                @if(!is_null($assigned_line_for_train->lines) && $assigned_line_for_train->lines->id == $line->id)
+                                    <option selected value="{{$line->id}}">No. {{$line->id}}</option>
+                                @else
+                                    <<option value="{{$line->id}}">No. {{$line->id}}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        <span class="text-danger">@error('line') {{$message}} @enderror</span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label for="captain" class="form-label">Assign Captain<span class="text-muted">(Required)</span></label>
+                        <select class="form-select" id="captain" name="captain">
+                            <option value="null">--None--</option>
+                            @foreach($captains as $captain)
+                                @if(!is_null($assigned_line_for_train->captains) && $assigned_line_for_train->captains->id == $captain->id)
+                                    <option selected value="{{$captain->id}}">{{$captain->name}}</option>
+                                @else
+                                    <option value="{{$captain->id}}">{{$captain->name}}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        <span class="text-danger">@error('captain') {{$message}} @enderror</span>
+                    </div>
+                @else
+                    <div class="col-sm-8">
+                        <label for="line" class="form-label">Assign Line<span class="text-muted">(Required)</span></label>
+                        <select class="form-select" id="line" name="line">
+                            <option value="null">--None--</option>
+                            @foreach($lines as $line)
+                                <option value="{{$line->id}}">No. {{$line->id}}</option>
+                            @endforeach
+                        </select>
+                        <span class="text-danger">@error('line') {{$message}} @enderror</span>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label for="captain" class="form-label">Assign Captain<span class="text-muted">(Required)</span></label>
+                        <select class="form-select" id="captain" name="captain">
+                            <option value="null">--None--</option>
+                            @foreach($captains as $captain)
+                                <option value="{{$captain->id}}">{{$captain->name}}</option>
+                            @endforeach
+                        </select>
+                        <span class="text-danger">@error('captain') {{$message}} @enderror</span>
+                    </div>
+                @endif
 
                 <div style="margin-top: 15px;" class="row ">
                     <label style="margin-left: -10px;" class="form-label">Train status</label>
@@ -225,7 +243,8 @@ $captains = DB::table('captains')->get();
                                 true
                             </label>
                         @else
-                            <input class="form-check-input" type="radio" name="status" id="flexRadioDefault1" value="true">
+                            <input class="form-check-input" type="radio" name="status" id="flexRadioDefault1"
+                                   value="true">
                             <label class="form-check-label" for="flexRadioDefault1">
                                 true
                             </label>
@@ -239,7 +258,8 @@ $captains = DB::table('captains')->get();
                                 false
                             </label>
                         @else
-                            <input class="form-check-input" type="radio" name="status" id="flexRadioDefault2" value="false"
+                            <input class="form-check-input" type="radio" name="status" id="flexRadioDefault2"
+                                   value="false"
                                    checked>
                             <label class="form-check-label" for="flexRadioDefault2">
                                 false
@@ -258,8 +278,9 @@ $captains = DB::table('captains')->get();
     </div>
 </main>
 </body>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
-<script src="{{ url('/js/feather.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/jquery.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/bootstrap.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>

@@ -12,10 +12,10 @@ $trips = Trip::all();
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
-    <title>Dashboard Template · Bootstrap v5.1</title>
+    <title>Railway Management System</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
 
     <style>
         .bd-placeholder-img {
@@ -87,17 +87,12 @@ $trips = Trip::all();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/customers")}}">
                                 <span data-feather="users"></span>
                                 Customer accounts
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Management tools</span>
@@ -123,11 +118,11 @@ $trips = Trip::all();
 </head>
 <body>
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <form method="get" action="{{route("search_trains")}}">
+    <form method="get" action="{{route("search_trips")}}">
         @csrf
         <div class="input-group p-2">
             <input type="search" class="form-control rounded"
-                   placeholder="Search by number, type, number of cars, ID, status, line, captain" aria-label="Search"
+                   placeholder="Search by ID, date, captain, employee, line number" aria-label="Search"
                    name="search_query" aria-describedby="search-addon"/>
             <button type="submit" class="btn btn-outline-primary">search</button>
         </div>
@@ -147,103 +142,267 @@ $trips = Trip::all();
             <thead>
             <tr>
                 <th scope="col" style="text-align: center">ID</th>
-                <th scope="col" style="text-align: center">name</th>
-                <th scope="col" style="text-align: center">train</th>
                 <th scope="col" style="text-align: center">captain</th>
-                <th scope="col" style="text-align: center">departure time</th>
-                <th scope="col" style="text-align: center">arrival time</th>
+                <th scope="col" style="text-align: center">employee</th>
+                <th scope="col" style="text-align: center">line</th>
+                <th scope="col" style="text-align: center">date and time</th>
                 <th scope="col" style="text-align: center">edit</th>
             </tr>
             </thead>
 
             <tbody>
-            @if(isset($result))
-                @foreach($result as $trip)
-                    <tr>
-                        <th scope="row">
-                            <input type="type"
-                                   style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
-                                   name="train_id" value="{{$trip->id}}" disabled>
-                        </th>
+            @if(isset($result) || isset($result1) || isset($result2) || isset($result3) || isset($result4))
+                @if(isset($result))
+                    @foreach($result as $trip)
+                        <tr>
+                            <td style="text-align: center">
+                                <input type="type"
+                                       style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                       name="train_id" value="{{$trip->id}}" disabled>
+                            </td>
 
-                        <td style="text-align: center">
-                            <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                {{$trip->name}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($trip->train))
-                                    {{"not assigned"}}
-                                @else
-                                    {{$trip->trains->number}}
-                                @endif
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($trip->captain))
-                                    {{"not assigned"}}
-                                @else
-                                    {{$trip->captains->name}}
-                                @endif
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{date('Y/m/d h:i:s a', strtotime($trip->departure_time))}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{date('Y/m/d h:i:s a', strtotime($trip->arrival_time))}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
-                        </td>
-                    </tr>
-                @endforeach
+                            <td style="text-align: center">
+                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->captains))
+                                        <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->employees))
+                                        <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(isset($result1))
+                    @foreach($result1 as $trip)
+                        <tr>
+                            <td style="text-align: center">
+                                <input type="type"
+                                       style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                       name="train_id" value="{{$trip->id}}" disabled>
+                            </td>
+
+                            <td style="text-align: center">
+                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->captains))
+                                        <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->employees))
+                                        <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(isset($result2))
+                    @foreach($result2 as $trip)
+                        <tr>
+                            <td style="text-align: center">
+                                <input type="type"
+                                       style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                       name="train_id" value="{{$trip->id}}" disabled>
+                            </td>
+
+                            <td style="text-align: center">
+                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->captains))
+                                        <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->employees))
+                                        <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(isset($result3))
+                    @foreach($result3 as $trip)
+                        <tr>
+                            <td style="text-align: center">
+                                <input type="type"
+                                       style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                       name="train_id" value="{{$trip->id}}" disabled>
+                            </td>
+
+                            <td style="text-align: center">
+                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->captains))
+                                        <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->employees))
+                                        <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                @if(isset($result4))
+                    @foreach($result4 as $trip)
+                        <tr>
+                            <td style="text-align: center">
+                                <input type="type"
+                                       style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
+                                       name="train_id" value="{{$trip->id}}" disabled>
+                            </td>
+
+                            <td style="text-align: center">
+                                <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->captains))
+                                        <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    @if(!is_null($trip->employees))
+                                        <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
+                                    @else
+                                        {{"not assigned"}}
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
+
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                    {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
+                                </div>
+                            </td>
+                            <td style="text-align: center">
+                                <a href="{{route('edit_trip_index', ['trip_id'=>($trip->id)])}}">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             @else
                 @foreach($trips as $trip)
                     <tr>
-                        <th scope="row">
+                        <td style="text-align: center">
                             <input type="type"
                                    style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
                                    name="train_id" value="{{$trip->id}}" disabled>
-                        </th>
+                        </td>
 
                         <td style="text-align: center">
                             <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                {{$trip->name}}
-                            </div>
-                        </td>
-                        <td style="text-align: center">
-                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($trip->train))
-                                    {{"not assigned"}}
+                                @if(!is_null($trip->captains))
+                                    <a href="{{route('edit_captain_index', ['emp_id'=>($trip->captains->id)])}}">{{$trip->captains->name}}</a>
                                 @else
-                                    {{$trip->trains->number}}
+                                    {{"not assigned"}}
                                 @endif
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                @if(is_null($trip->captain))
-                                    {{"not assigned"}}
+                                @if(!is_null($trip->employees))
+                                    <a href="{{route('edit_reservation_employee_index', ['emp_id'=>($trip->employees->id)])}}">{{$trip->employees->name}}</a>
                                 @else
-                                    {{$trip->captains->name}}
+                                    {{"not assigned"}}
                                 @endif
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{date('Y/m/d h:i:s a', strtotime($trip->departure_time))}}
+                                <a href="{{route('edit_line_index', ['line_id'=>($trip->lines->id)])}}">No. {{$trip->lines->id}}</a>
                             </div>
                         </td>
-                        <td style="text-align: center">
+                        <td style="text-align: right">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{date('Y/m/d h:i:s a', strtotime($trip->arrival_time))}}
+                                {{date('Y/m/d h:i:s A', strtotime($trip->date))}}
                             </div>
                         </td>
                         <td style="text-align: center">
@@ -258,8 +417,8 @@ $trips = Trip::all();
 </main>
 </body>
 
-<script src="{{ url('/js/jquery.min.js') }}"></script>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
-<script src="{{ url('/js/feather.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/jquery.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/bootstrap.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>

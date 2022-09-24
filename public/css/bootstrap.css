@@ -5950,10 +5950,17 @@ button.list-group-item-danger.active:focus {
   border-radius: 4px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  margin-top: 50%;
+ 
+  
+  
+  
 }
 
 .panel-body {
   padding: 15px;
+  
+  
 }
 .panel-body:before, .panel-body:after {
   content: " ";
@@ -5968,6 +5975,7 @@ button.list-group-item-danger.active:focus {
   border-bottom: 1px solid transparent;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
+
 }
 .panel-heading > .dropdown .dropdown-toggle {
   color: inherit;
@@ -5978,6 +5986,7 @@ button.list-group-item-danger.active:focus {
   margin-bottom: 0;
   font-size: 16px;
   color: inherit;
+  
 }
 .panel-title > a,
 .panel-title > small,
@@ -5993,6 +6002,7 @@ button.list-group-item-danger.active:focus {
   border-top: 1px solid #ddd;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
+  
 }
 
 .panel > .list-group,

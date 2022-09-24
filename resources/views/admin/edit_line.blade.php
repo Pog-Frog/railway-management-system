@@ -1,4 +1,11 @@
-<!doctype html>
+<?php
+
+use App\Station;
+
+$stations = Station::all();
+?>
+
+    <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -6,11 +13,11 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
-    <title>Dashboard Template · Bootstrap v5.1</title>
+    <title>Railway Management System</title>
 
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -82,17 +89,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/customers")}}">
                                 <span data-feather="users"></span>
                                 Customer accounts
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Management tools</span>
@@ -136,22 +138,39 @@
                 </div>
             @endif
             <div class="row g-3">
-                <div class="col-sm-6">
-                    <label for="name" class="form-label">Line name<span
+                <div class="col-md-7">
+                    <label for="source_station" class="form-label">Choose Source station<span class="text-muted">(Required)</span></label>
+                    <select class="form-select" id="source_station" name="source_station">
+                        <option value="null">--None--</option>
+                        @foreach($stations as $station)
+                            @if($station->name == $line->source_station)
+                                <option selected value="{{$station->name}}">{{$station->name}} - {{$station->city}}</option>
+                            @else
+                                <option value="{{$station->name}}">{{$station->name}} - {{$station->city}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <span class="text-danger">@error('source_station') {{$message}} @enderror</span>
+                </div>
+                <div class="col-md-7">
+                    <label for="destination_station" class="form-label">Choose Destination station<span
                             class="text-muted">(Required)</span></label>
-                    <input type="text" class="form-control" id="name" placeholder="" name="name"
-                           value="{{$line->name}}">
-                    <span class="text-danger">@error('name') {{$message}} @enderror</span>
+                    <select class="form-select" id="destination_station" name="destination_station">
+                        <option value="null">--None--</option>
+                        @foreach($stations as $station)
+                            @if($station->name == $line->destination_station)
+                                <option selected value="{{$station->name}}">{{$station->name}} - {{$station->city}}</option>
+                            @else
+                                <option value="{{$station->name}}">{{$station->name}} - {{$station->city}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <span class="text-danger">@error('destination_station') {{$message}} @enderror</span>
                 </div>
 
-                <div class="col-8">
-                    <label for="stations" class="form-label">Stations<span
-                            class="text-muted">(Required)</span></label>
-                    <input type="text" class="form-control" id="stations" placeholder="" name="stations"
-                           value="{{$line->stations}}">
-                    <span class="text-danger">@error('stations') {{$message}} @enderror</span>
+                <div class="col-md-7">
+                    <span><a href="{{route('view_assigned_trains', ['line_id'=>($line->id)])}}">View Assigned Trains</a></span>
                 </div>
-
                 <button class="w-100 btn btn-outline-primary btn-lg" type="submit">Submit</button>
         </form>
         <form method="POST" action="{{route('delete_line', ['line_id'=>($line->id)])}}">
@@ -163,8 +182,9 @@
     </div>
 </main>
 </body>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
-<script src="{{ url('/js/feather.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/jquery.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/bootstrap.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>

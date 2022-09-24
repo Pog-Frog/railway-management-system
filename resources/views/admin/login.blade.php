@@ -12,7 +12,7 @@
 
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
 
     <style>
         .bd-placeholder-img {
@@ -59,12 +59,6 @@
             <input type="password" class="form-control" placeholder="Password" name="password">
             <label for="floatingPassword">Password</label>
             <span class="text-danger">@error('password') {{$message}} @enderror</span>
-        </div>
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" value="remember-me"> Remember me
-            </label>
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
     </form>

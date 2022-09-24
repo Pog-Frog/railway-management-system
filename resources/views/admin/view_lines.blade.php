@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
+use App\Line;
 
-$lines = DB::table('lines')->get();
+$lines = Line::all();
 ?>
-    <!doctype html>
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -12,11 +13,11 @@ $lines = DB::table('lines')->get();
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
-    <title>Dashboard Template · Bootstrap v5.1</title>
+    <title>Railway Management System</title>
 
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -88,17 +89,12 @@ $lines = DB::table('lines')->get();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/customers")}}">
                                 <span data-feather="users"></span>
                                 Customer accounts
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Management tools</span>
@@ -127,7 +123,8 @@ $lines = DB::table('lines')->get();
     <form method="get" action="{{route("search_lines")}}">
         @csrf
         <div class="input-group p-2">
-            <input type="search" class="form-control rounded" placeholder="Search by line name, by stations" aria-label="Search"
+            <input type="search" class="form-control rounded" placeholder="Search by ID, line Source station, by Destination station"
+                   aria-label="Search"
                    name="search_query" aria-describedby="search-addon"/>
             <button type="submit" class="btn btn-outline-primary">search</button>
         </div>
@@ -146,10 +143,11 @@ $lines = DB::table('lines')->get();
             <thead>
             <tr>
                 <th scope="col" style="text-align: center">ID</th>
-                <th scope="col" style="text-align: center">name</th>
-                <th scope="col" style="text-align: center">stations</th>
+                <th scope="col" style="text-align: center">Source station - city</th>
+                <th scope="col" style="text-align: center">Destination station - city</th>
                 <th scope="col" style="text-align: center">created at</th>
                 <th scope="col" style="text-align: center">updated at</th>
+                <th scope="col" style="text-align: center">view assigned trains</th>
                 <th scope="col" style="text-align: center">edit</th>
             </tr>
             </thead>
@@ -163,15 +161,14 @@ $lines = DB::table('lines')->get();
                                    style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
                                    name="train_id" value="{{$x->id}}" disabled>
                         </td>
-
                         <td style="text-align: center">
                             <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                {{$x->name}}
+                                {{$x->source_station}} - {{\App\Station::query()->where('name', '=', $x->source_station)->first(['city'])->city}}
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$x->stations}}
+                                {{$x->destination_station}} - {{\App\Station::query()->where('name', '=', $x->destination_station)->first(['city'])->city}}
                             </div>
                         </td>
                         <td style="text-align: center">
@@ -180,9 +177,12 @@ $lines = DB::table('lines')->get();
                             </div>
                         </td>
                         <td style="text-align: center">
-                        <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                            {{$x->updated_at}}
-                        </div>
+                            <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
+                                {{$x->updated_at}}
+                            </div>
+                        </td>
+                        <td style="text-align: center">
+                            <a href="{{route('view_assigned_trains', ['line_id'=>($x->id)])}}">view</a>
                         </td>
                         <td style="text-align: center">
                             <a href="{{route('edit_line_index', ['line_id'=>($x->id)])}}">Edit</a>
@@ -197,15 +197,14 @@ $lines = DB::table('lines')->get();
                                    style="max-width: 50px; max-height: 100px;overflow-y: auto; text-align: center;"
                                    name="train_id" value="{{$line->id}}" disabled>
                         </td>
-
                         <td style="text-align: center">
                             <div style="max-width: 500px;max-height: 100px;overflow-y: auto;">
-                                {{$line->name}}
+                                {{$line->source_station}} - {{\App\Station::query()->where('name', '=', $line->source_station)->first(['city'])->city}}
                             </div>
                         </td>
                         <td style="text-align: center">
                             <div style="max-width: 300px; max-height: 100px;overflow-y: auto;">
-                                {{$line->stations}}
+                                {{$line->destination_station}} - {{\App\Station::query()->where('name', '=', $line->destination_station)->first(['city'])->city}}
                             </div>
                         </td>
                         <td style="text-align: center">
@@ -219,6 +218,9 @@ $lines = DB::table('lines')->get();
                             </div>
                         </td>
                         <td style="text-align: center">
+                            <a href="{{route('view_assigned_trains', ['line_id'=>($line->id)])}}">view</a>
+                        </td>
+                        <td style="text-align: center">
                             <a href="{{route('edit_line_index', ['line_id'=>($line->id)])}}">Edit</a>
                         </td>
                     </tr>
@@ -229,8 +231,9 @@ $lines = DB::table('lines')->get();
     </div>
 </main>
 </body>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
-<script src="{{ url('/js/feather.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/jquery.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/bootstrap.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>

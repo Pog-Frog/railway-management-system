@@ -67,7 +67,7 @@
         </div>
 
         <div class="form-floating">
-            <input type="name" class="form-control" placeholder="Female/Male"  name="gendre">
+            <input type="name" class="form-control" placeholder="Female/Male"  name="gender">
             <label for="floatingInput">Gender</label>
             <span class="text-danger">@error('gender') {{$message}} @enderror</span>
         </div>
@@ -80,11 +80,11 @@
             <span class="text-danger">@error('password') {{$message}} @enderror</span>
         </div>
 
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" value="remember-me"> Remember me
-            </label>
+        <div class="form-floating">
+            <a href="{{route('user_login_index')}}">already have an account ? login here</a>
         </div>
+
+
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
     </form>
 </main>

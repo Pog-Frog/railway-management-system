@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\Cors::class, 
+
     ];
 
     /**
@@ -55,8 +57,14 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'isloggedin' => \App\Http\Middleware\AuthCheck::class,
         'isloggedin_user' => \App\Http\Middleware\AuthCheck_user::class,
+        'isloggedin_employee' => \App\Http\Middleware\AuthCheck_employee::class,
         'alreadyloggedin' => \App\Http\Middleware\Alreadyloggedin::class,
         'alreadyloggedin_user' => \App\Http\Middleware\Alreadyloggedin_user::class,
+        'alreadyloggedin_employee' => \App\Http\Middleware\Alreadyloggedin_employee::class,
+        'alreadyloggedin_captain' => \App\Http\Middleware\alreadyloggedin_captain::class,
+        'isloggedin_captain' => \App\Http\Middleware\isloggedin_captain::class,
+        'isloggedin_tech' => \App\Http\Middleware\AuthCheck_tech::class,
+        'alreadyloggedin_tech' => \App\Http\Middleware\Alreadyloggedin_tech::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -67,5 +75,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
     ];
 }

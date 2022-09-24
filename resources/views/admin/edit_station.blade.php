@@ -1,3 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\DB;
+
+$admins = DB::table('admins')->get();
+
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,11 +14,11 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
-    <title>Dashboard Template · Bootstrap v5.1</title>
+    <title>Railway Management System</title>
 
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url('styles/admin/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -82,17 +90,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{url("admin/customers")}}">
                                 <span data-feather="users"></span>
                                 Customer accounts
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="bar-chart-2"></span>
-                                Reports
-                            </a>
-                        </li>
+
                     </ul>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                         <span>Management tools</span>
@@ -152,6 +155,21 @@
                     <span class="text-danger">@error('city') {{$message}} @enderror</span>
                 </div>
 
+                <div class="col-md-8">
+                    <label for="admin" class="form-label">Assign admin<span class="text-muted">(Required)</span></label>
+                    <select class="form-select" id="admin" name="admin">
+                        <option value="null">--None--</option>
+                        @foreach($admins as $admin)
+                            @if($station->admin == $admin->id)
+                                <option selected value="{{$admin->id}}">{{$admin->name}}</option>
+                            @else
+                                <option value="{{$admin->id}}">{{$admin->name}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <span class="text-danger">@error('admin') {{$message}} @enderror</span>
+                </div>
+
                 <button class="w-100 btn btn-outline-primary btn-lg" type="submit">Submit</button>
         </form>
         <form method="POST" action="{{route('delete_station', ['station_id'=>($station->id)])}}">
@@ -163,8 +181,9 @@
     </div>
 </main>
 </body>
-<script src="{{ url('/js/bootstrap.min.js') }}"></script>
 
-<script src="{{ url('/js/feather.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/jquery.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/bootstrap.min.js') }}"></script>
+<script src="{{ url('/scripts/admin/feather.min.js') }}"></script>
 <script src="{{ url('/scripts/admin/dashboard.js') }}"></script>
 </html>

@@ -6,20 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Train extends Model
 {
-    //
-    public function lines()
+    public function admins()
     {
-        return $this->belongsTo(Lines::class, 'line');
+        return $this->belongsTo(Admin::class, 'admin');
     }
-
-    public function types()
-    {
-        return $this->belongsTo(Train_type::class, 'type');
-    }
-
-    public function captains()
-    {
-        return $this->belongsTo(Captain::class, 'captain');
-    }
-
 }
