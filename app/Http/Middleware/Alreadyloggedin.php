@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class Alreadyloggedin
 {
@@ -15,7 +16,7 @@ class Alreadyloggedin
      */
     public function handle($request, Closure $next)
     {
-        if(session()->has('adminID')){
+        if(isset(Auth::guard('admin')->user()->id)){
             return redirect('admin/dashboard');
         }
         return $next($request);

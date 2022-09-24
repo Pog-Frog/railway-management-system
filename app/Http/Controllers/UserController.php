@@ -28,32 +28,18 @@ class UserController extends Controller
 
     public function user_login(Request $request)
     {
+
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|max:12|min:8'
         ]);
-        $user = User::where('email', '=', $request->email)->first();
-        if($user && Hash::check($request->password, $user->password)){
-
-            // Return ID To React Native App
-            if ($request->has('api')){
-                return response()->json([
-                    'message' => "{$user->id} "
-                ]);
-            }
-            $request->session()->put('loginID', $user->id);
-            return redirect("/");
-
-
-        }else{
-            
-            // Return Failed Message To React Native App
-            if ($request->has('api')){
-                return response()->json([
-                    'message' => '-1'
-                ]);
-            }
-
+        if(Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ])) {
+            return redirect('/');
+        } else {
             return back()->with('fail', 'Email or Password is incorrect');
         }
     }
@@ -101,7 +87,7 @@ class UserController extends Controller
             return back()->with('success','User Registered');
         }
         else{
-     
+
             if ($request->has('api')){
                 return response()->json([
                     'message' => ' 0'
@@ -124,10 +110,8 @@ class UserController extends Controller
 
     public function user_logout()
     {
-        if (session()->has('loginID')) {
-            session()->pull('loginID');
-            return redirect("/");
-        }
+        Auth::guard('web')->logout();
+        return redirect()->route('user_index');
     }
 
     public function user_book_index()
@@ -160,7 +144,7 @@ class UserController extends Controller
                 $seat = Seat::where('train', '=', $train->id)->where('seat_availability', '=', 'false')
                 ->where('id','=',$user->seat)
                 ->first();
-                // Set avaialbity to false after seat resereverd 
+                // Set avaialbity to false after seat resereverd
                 $seat->seat_availability='true';
                 $seat->save();
                 $user->delete();
@@ -198,14 +182,14 @@ class UserController extends Controller
         $query = array( );
         $stations = \DB::select('select * from stations', array());
         foreach($stations as $station){
-            array_push($query, 
+            array_push($query,
                 $station->city,
         );
         }
         if ($req->has('api')){
             return response()->json([
            'query' => $query
-            ]);     
+            ]);
         }
     }
 
@@ -227,14 +211,14 @@ class UserController extends Controller
         if ($user) {
             $book = Booked_tickets::where('user_id', '=', $loginID)->where('id','=',$book_id)->first();
             $stops_station = Stops_stations::where('id', '=', $book->stops_station)->first();
-            
+
             if ($stops_station->date > $nowDate) {
                 if ($req->has('api')){
                      return response()->json([
                     'message' => "1",
                      ]);
-                
-                
+
+
             }
              return view("user/reschedule_trip",compact('stops_station','book'));
             } else {
@@ -267,7 +251,7 @@ class UserController extends Controller
             $user = Booked_tickets::where('user_id', '=', session()->get("loginID"))->first();
         }
 
-        
+
             if ($req->has('api')){
                 $userId = $req->loginID;
             }
@@ -282,7 +266,7 @@ class UserController extends Controller
                 ->join('booked_tickets', 'stops_stations.id', '=', 'booked_tickets.stops_station')
                 ->where('user_id',$userId)
                 ->get();
-            
+
 
             if ($req->has('api')){
                 return response()->json([
@@ -292,16 +276,16 @@ class UserController extends Controller
 
             $query= json_decode($query, true);
 
-        
+
         return view("user/view_booked_trips", compact('query'));
 
-        
+
     }
 
     public function today_trips(Request $req)
     {
         $todayDate = Carbon::now()->format('Y-d-m');
-        
+
         $query = Stops_stations::where('date', 'like', '%' . $todayDate . '%')->get();
         if ($req->has('api')){
             return response()->json([
@@ -324,13 +308,13 @@ class UserController extends Controller
             ->where('destination_station', 'like', '%' . $destination_station . '%')
             ->get();
          $user =session()->get("loginID");
-        
+
         if ($req->has('api')){
             return response()->json([
                 'message' => "{$query}"
             ]);
         }
-        
+
         return view('user/view_available_trips', compact('query', 'user'));
     }
 
@@ -351,16 +335,16 @@ class UserController extends Controller
             $userId = session()->get('loginID');
             $stops_id = $request->stops_id;
         }
-        
-        
+
+
         $booked_ticket = new Booked_tickets();
         $stops_station = Stops_stations::where('id', '=', $stops_id)->first();
         $train = Train::where('train_no', '=', $stops_station->train_no)->first();
         $seat = Seat::where('train', '=', $train->id)->where('seat_availability', '=', 'true')->first();
-        // Set avaialbity to false after seat resereverd 
+        // Set avaialbity to false after seat resereverd
         $seat->seat_availability='false';
         $seat->save();
-        
+
         $booked_ticket->user_id = $userId;
         $booked_ticket->stops_station = $stops_station->id;
         $booked_ticket->seat = $seat->id;

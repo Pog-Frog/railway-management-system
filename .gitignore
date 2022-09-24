@@ -1,10 +1,16 @@
 /node_modules
 /storage/*.key
 /vendor
-.env
+##.env
 .env.backup
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/public/build
+/public/hot
+/public/storage
+auth.json
+/.idea
+/.vscode

@@ -87,7 +87,7 @@
                             <li><a href="{{route('user_contact')}}">Contact Us</a></li>
 
 
-                            @if(session()->has('loginID'))
+                            @auth('web')
 
 
                             <li>
@@ -101,11 +101,15 @@
 							</li>
                             <li><a href="{{route('user_logout')}}">Logout</a></li>
 
-                            @else
-
-							<li><a href="{{route('user_login_index')}}">Login</a></li>
-							<li><a href="{{route('user_register_index')}}">Register</a></li>
-                            @endif
+                            @endauth
+                            @guest
+                                @guest('web')
+                                    @guest('admin')
+                                        <li><a href="{{route('user_login_index')}}">Login</a></li>
+                                        <li><a href="{{route('user_register_index')}}">Register</a></li>
+                                    @endguest
+                                @endguest
+                            @endguest
 						</ul>
 					</nav>
 				</div>

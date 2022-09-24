@@ -19,76 +19,27 @@ use App\Trip;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Throwable;
 
 class CustomAuthController extends Controller
 {
-    public function admin_login_index()
+    public function __construct()
     {
-        return view("admin/login");
-    }
-
-    public function admin_login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|max:12|min:8'
-        ]);
-        $user = Admin::query()->where('email', '=', $request->email)->first();
-        if ($user && Hash::check($request->password, $user->password)) {
-            $request->session()->put('adminID', $user->id);
-            return redirect('admin/dashboard');
-        } else {
-            return back()->with('fail', 'Email or Password is incorrect');
-        }
-    }
-
-    public function admin_register_index()
-    {
-        return view("admin/register");
-    }
-
-    public function admin_register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:admins',
-            'password' => 'required|max:12|min:8'
-        ]);
-        $user = new Admin();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $result = $user->save();
-        if ($result) {
-            return back()->with('success', 'Admin Registered');
-        } else {
-            return back()->with('fail', 'Something went wrong');
-        }
+        $this->middleware('auth:admin');
     }
 
     public function admin_index()
     {
-        $data = array();
-        if (session()->has('adminID')) {
-            $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
-        }
+        $data = Auth::guard('admin')->user();
         return view('admin/dashboard', compact('data'));
-    }
-
-    public function admin_logout()
-    {
-        if (session()->has('adminID')) {
-            session()->pull('adminID');
-            return redirect('admin/');
-        }
     }
 
     public function trains_index()
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/trains_management_index", compact('data'));
     }
 
@@ -204,7 +155,7 @@ class CustomAuthController extends Controller
 
     public function edit_train_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $train_id = $request->train_id;
         $train = Train::query()->where('id', '=', $train_id)->first();
         $assigned_line_for_train = Assigned_Trains_for_Lines::where('train', '=', $train_id)->first();
@@ -306,13 +257,13 @@ class CustomAuthController extends Controller
 
     public function view_trains(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/view_trains", compact('data'));
     }
 
     public function search_trains(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $user_query = $request->search_query;
         if ($user_query == null) {
             return view("admin/view_trains", compact('data'));
@@ -337,7 +288,7 @@ class CustomAuthController extends Controller
 
     public function stations_index()
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/stations_managment_index", compact('data'));
     }
 
@@ -365,7 +316,7 @@ class CustomAuthController extends Controller
 
     public function edit_station_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $station_id = $request->station_id;
         $station = Station::query()->where('id', '=', $station_id)->first();
         return view('admin/edit_station', compact('data', 'station'));
@@ -418,7 +369,7 @@ class CustomAuthController extends Controller
 
     public function delete_station(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first(); ############
+        $data = Auth::guard('admin')->user(); ############
         $station = Station::query()->where('id', '=', $request->station_id)->first();
         $line_arrival_check = Line::query()->where('source_station', '=', $station->name)->first();
         $line_destination_check = Line::query()->where('destination_station', '=', $station->name)->first();
@@ -438,13 +389,13 @@ class CustomAuthController extends Controller
 
     public function view_stations(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/view_stations", compact('data'));
     }
 
     public function search_stations(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $user_query = $request->search_query;
         if ($user_query == null) {
             return view("admin/view_stations", compact('data'));
@@ -466,7 +417,7 @@ class CustomAuthController extends Controller
 
     public function view_allowed_trains(Request $request)
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $station_id = $request->station_id;
         $station = Station::query()->where('id', '=', $station_id)->first();
         $can_stop = Can_stop::query()
@@ -482,7 +433,7 @@ class CustomAuthController extends Controller
 
     public function search_not_allowed_trains(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $station_id = $request->station_id;
         $station = Station::query()->where('id', '=', $station_id)->first();
         $can_stop = Can_stop::query()
@@ -544,7 +495,7 @@ class CustomAuthController extends Controller
 
     public function employees_index()
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/employees_management_index", compact('data'));
     }
 
@@ -628,13 +579,13 @@ class CustomAuthController extends Controller
 
     public function view_employees()
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/view_employees", compact('data'));
     }
 
     public function search_employees(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         if ($request->profession == "captain") {
             $user_query = $request->search_query;
             $result = Captain::query()
@@ -662,7 +613,7 @@ class CustomAuthController extends Controller
 
     public function edit_captain_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $emp = Captain::query()->where('id', '=', $request->emp_id)->first();
         $profession = "captain";
         return view('admin/edit_employee', compact('data', 'profession', 'emp'));
@@ -671,7 +622,7 @@ class CustomAuthController extends Controller
 
     public function edit_technician_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $emp = Technician::query()->where('id', '=', $request->emp_id)->first();
         $profession = "technician";
         return view('admin/edit_employee', compact('data', 'profession', 'emp'));
@@ -679,7 +630,7 @@ class CustomAuthController extends Controller
 
     public function edit_reservation_employee_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $emp = Employee::query()->where('id', '=', $request->emp_id)->first();
         $profession = "reservation";
         return view('admin/edit_employee', compact('data', 'profession', 'emp'));
@@ -792,7 +743,7 @@ class CustomAuthController extends Controller
 
     public function lines_index()
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/lines_managment_index", compact('data'));
     }
 
@@ -827,7 +778,7 @@ class CustomAuthController extends Controller
 
     public function edit_line_index(Request $request)
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $line_id = $request->line_id;
         $line = Line::where('id', '=', $line_id)->first();
         return view('admin/edit_line', compact('data', 'line'));
@@ -876,13 +827,13 @@ class CustomAuthController extends Controller
 
     public function view_lines(Request $request)
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/view_lines", compact('data'));
     }
 
     public function search_lines(Request $request)
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $user_query = $request->search_query;
         $result = Line::query()
             ->where('id', 'LIKE', "%{$user_query}%")
@@ -894,7 +845,7 @@ class CustomAuthController extends Controller
 
     public function view_assigned_trains(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $line_id = $request->line_id;
         $query = Assigned_Trains_for_Lines::query()
             ->where('line', '=', $line_id)
@@ -904,7 +855,7 @@ class CustomAuthController extends Controller
 
     public function manage_train_schedules(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $line_id = $request->line_id;
         $train_id = $request->train_id;
         $train = Train::query()->where('id', '=', $train_id)->first();
@@ -965,7 +916,7 @@ class CustomAuthController extends Controller
 
     public function edit_train_schedule_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $line_id = $request->line_id;
         $train_id = $request->train_id;
         $train = Train::query()->where('id', '=', $request->train_id)->first();
@@ -1029,7 +980,7 @@ class CustomAuthController extends Controller
                 ->where('id', '=', $request->record_id)
                 ->delete();
             if ($result) {
-                $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+                $data = Auth::guard('admin')->user();
                 $line_id = $request->line_id;
                 $train_id = $request->train_id;
                 $train = Train::query()->where('id', '=', $train_id)->first();
@@ -1054,7 +1005,7 @@ class CustomAuthController extends Controller
 
     public function trips_index(Request $request)
     {
-        $data = Admin::where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/trips_management_index", compact('data'));
     }
 
@@ -1083,7 +1034,7 @@ class CustomAuthController extends Controller
 
     public function edit_trip_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $trip_id = $request->trip_id;
         $trip = Trip::where('id', '=', $trip_id)->first();
         return view('admin/edit_trip', compact('data', 'trip'));
@@ -1124,13 +1075,13 @@ class CustomAuthController extends Controller
 
     public function view_trips(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/view_trips", compact('data'));
     }
 
     public function search_trips(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $user_query = $request->search_query;
         try {
             $date = Carbon::parse($user_query)->format('Y-m-d');
@@ -1202,13 +1153,13 @@ class CustomAuthController extends Controller
 
     public function customers_index(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         return view("admin/customers_managment_index", compact('data'));
     }
 
     public function search_customers(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $user_query = $request->search_query;
         if (!$user_query) {
             return view("admin/customers_managment_index", compact('data'));
@@ -1235,7 +1186,7 @@ class CustomAuthController extends Controller
 
     public function view_booked_tickets(Request $request)
     {
-        $data = Admin::query()->where('id', '=', session()->get("adminID"))->first();
+        $data = Auth::guard('admin')->user();
         $result = Booked_tickets::query()->where('user_id', '=', $request->user_id)->get();
         return view('admin/view_booked_tickets', compact('data', 'result'));
     }

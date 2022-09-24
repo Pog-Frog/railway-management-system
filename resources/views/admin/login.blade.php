@@ -37,7 +37,7 @@
 <body class="text-center">
 
 <main class="form-signin">
-    <form method="POST" action="{{route('login_admin')}}">
+    <form method="POST" action="{{route('admin_login')}}">
         @csrf
         @if(Session::has('success'))
             <div class="alert-success">{{Session::get('success')}}
