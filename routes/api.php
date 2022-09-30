@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('admin')->group(function () {
+    Route::post('/signup', [ApiAdmin::class, 'signup'])->name('api_login');
     Route::post('/login', [ApiAdmin::class, 'login'])->name('api_login')->middleware('alreadyloggedin');
     Route::get('/logout', [ApiAdmin::class, 'logout'])->name('api_logout')->middleware('auth:sanctum');
     Route::get('/user', function (Request $request){
